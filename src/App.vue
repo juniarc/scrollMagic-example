@@ -1,6 +1,6 @@
 <template>
     <main class="main-content">
-        <div class="container" ref="container"> 
+        <div class="container" ref="container">
             <div class="item-list" ref="list">
                 <Item v-for="item in dataDummy" :key="item.id" :item="item" />
             </div>
@@ -16,6 +16,7 @@ import Item from './components/Item.vue';
 import dataDummy from '@/data/dataDummy';
 
 ScrollMagicPluginGsap(ScrollMagic, TweenMax, TimelineMax)
+const MOBILE_SCREEN_WIDTH = 375 //px
 
 export default {
     components: {
@@ -47,7 +48,7 @@ export default {
             const container = this.$refs.container
             const list = this.$refs.list
 
-            if(this.controller) {
+            if (this.controller || this.scene) {
                 this.destroyScrollMagic();
             }
 
@@ -63,13 +64,14 @@ export default {
             })
                 .setPin(container)
                 .setTween(slideAnimation)
-                .addTo(controller)
+                .addTo(this.controller)
         },
         handleResize() {
             this.screenWidth = window.innerWidth;
         },
         updateScrollMagic(width) {
-            if(width <= 375) {
+            if (width <= MOBILE_SCREEN_WIDTH) {
+                console.log(width)
                 this.destroyScrollMagic();
             } else {
                 this.initScrollMagic();
@@ -94,16 +96,16 @@ export default {
 main {
     width: 100vw;
     height: 100vh;
-    
+
 }
 
 .container {
     width: 100%;
     height: 97%;
     overflow: hidden;
-    
+
     position: relative;
-    
+
 }
 
 .item-list {
@@ -126,8 +128,9 @@ main {
 
 @media screen and (max-width: 375px) {
     .container {
-        overflow: visible;
+        overflow: auto;
     }
+
     .item-list {
         width: 100%;
         height: 100%;
