@@ -23,24 +23,40 @@ export default {
     },
     data() {
         return {
-            dataDummy
+            dataDummy,
+            controller: null,
+            scene: null,
+            screenWidth: window.innerWidth
+        }
+    },
+    watch: {
+        screenWidth(newWidth) {
+            this.updateScrollMagic(newWidth)
         }
     },
     mounted() {
-        this.initScrollMagic()
+        this.updateScrollMagic()
+        window.addEventListener('resize', this.handleResize)
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.handleResize)
+        this.destroyScrollMagic()
     },
     methods: {
         initScrollMagic() {
-            const controller = new ScrollMagic.Controller();
-
             const container = this.$refs.container
             const list = this.$refs.list
 
+            if(this.controller) {
+                this.destroyScrollMagic();
+            }
+
+            this.controller = new ScrollMagic.Controller();
             const scrollDistance = list.clientWidth - container.clientWidth
 
             const slideAnimation = gsap.fromTo('.item-list', { left: '0' }, { left: -scrollDistance, ease: 'none', duration: 10 })
 
-            new ScrollMagic.Scene({
+            this.scene = new ScrollMagic.Scene({
                 triggerElement: container,
                 triggerHook: 0,
                 duration: scrollDistance
@@ -48,6 +64,26 @@ export default {
                 .setPin(container)
                 .setTween(slideAnimation)
                 .addTo(controller)
+        },
+        handleResize() {
+            this.screenWidth = window.innerWidth;
+        },
+        updateScrollMagic(width) {
+            if(width <= 375) {
+                this.destroyScrollMagic();
+            } else {
+                this.initScrollMagic();
+            }
+        },
+        destroyScrollMagic() {
+            if (this.scene) {
+                this.scene.destroy(true);
+                this.scene = null;
+            }
+            if (this.controller) {
+                this.controller.destroy(true);
+                this.controller = null;
+            }
         }
     }
 }
@@ -80,5 +116,26 @@ main {
     position: relative;
     left: 0;
     bottom: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .item-list {
+        width: 260vw;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .container {
+        overflow: visible;
+    }
+    .item-list {
+        width: 100%;
+        height: 100%;
+
+        flex-direction: column;
+        align-items: center;
+
+        padding: 20px;
+    }
 }
 </style>

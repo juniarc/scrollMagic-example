@@ -62,6 +62,7 @@ const props = defineProps({
 }
 
 .content__wrapper {
+    height: 45%;
     padding: 40px;
 
     position: relative;
@@ -96,6 +97,36 @@ const props = defineProps({
 
 .item__wrapper:hover .text-bg-color {
     height: 102%;
+}
+
+@media screen and (max-width: 768px) {
+    .item__wrapper {
+        min-width: 30vw;
+        width: 30vw;
+        height: 15rem;
+
+        margin: .5rem;
+    }
+
+    .content__wrapper {
+        padding: 16px;
+    }
+
+    .content-title {
+        font-size: 1rem;
+        height: 2rem;
+    }
+
+    .content-desc {
+        font-size: .75rem;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .item__wrapper {
+        width: 100%;
+        height: 20rem;
+    }
 }
 
 </style>
